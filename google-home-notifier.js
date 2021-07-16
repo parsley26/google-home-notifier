@@ -5,6 +5,9 @@ var browser = mdns.createBrowser(mdns.tcp('googlecast'));
 var deviceAddress;
 var language;
 
+var VoiceTextWriter = require('./VoiceTextWriter');
+var voiceTextWriter = new VoiceTextWriter();
+
 var device = function(name, lang = 'en') {
     device = name;
     language = lang;
@@ -14,13 +17,6 @@ var device = function(name, lang = 'en') {
 var ip = function(ip, lang = 'en') {
   deviceAddress = ip;
   language = lang;
-  return this;
-}
-
-var googletts = require('google-tts-api');
-var googlettsaccent = 'us';
-var accent = function(accent) {
-  googlettsaccent = accent;
   return this;
 }
 
@@ -64,13 +60,13 @@ var play = function(mp3_url, callback) {
   }
 };
 
-var getSpeechUrl = function(text, host, callback) {
-  googletts(text, language, 1, 1000, googlettsaccent).then(function (url) {
-    onDeviceUp(host, url, function(res){
+var getSpeechUrl = function (text, host, callback) {
+  voiceTextWriter.convertToText(text).then(function(result, reject){
+    onDeviceUp(host, result, function(res){
       callback(res)
     });
-  }).catch(function (err) {
-    console.error(err.stack);
+  }).catch(function onRejected(error){
+    console.error(error);
   });
 };
 

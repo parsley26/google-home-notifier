@@ -1,12 +1,14 @@
 var express = require('express');
 var googlehome = require('./google-home-notifier');
-var ngrok = require('ngrok');
 var bodyParser = require('body-parser');
 var app = express();
-const serverPort = 8091; // default port
 
-var deviceName = 'Google Home';
-var ip = '192.168.1.20'; // default IP
+const serverPort = 8091; // Port
+const voiceFilePath = '/opt/google-home-notifier/voice.wav';
+
+var deviceName = 'Nest Hub';
+var ip = '192.168.1.20'; // Nest Hub IP
+var defaultLanguage = 'ja';
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -21,7 +23,7 @@ app.post('/google-home-notifier', urlencodedParser, function (req, res) {
      ip = req.query.ip;
   }
 
-  var language = 'pl'; // default language code
+  var language = defaultLanguage; // default language code
   if (req.query.language) {
     language;
   }
@@ -63,7 +65,7 @@ app.get('/google-home-notifier', function (req, res) {
      ip = req.query.ip;
   }
 
-  var language = 'pl'; // default language code
+  var language = defaultLanguage; // default language code
   if (req.query.language) {
     language;
   }
@@ -95,14 +97,9 @@ app.get('/google-home-notifier', function (req, res) {
   }
 })
 
+app.get('/voice', function (req, res) {
+  res.download(voiceFilePath);
+})
+
 app.listen(serverPort, function () {
-  ngrok.connect(serverPort, function (err, url) {
-    console.log('Endpoints:');
-    console.log('    http://' + ip + ':' + serverPort + '/google-home-notifier');
-    console.log('    ' + url + '/google-home-notifier');
-    console.log('GET example:');
-    console.log('curl -X GET ' + url + '/google-home-notifier?text=Hello+Google+Home');
-	console.log('POST example:');
-	console.log('curl -X POST -d "text=Hello Google Home" ' + url + '/google-home-notifier');
-  });
 })
