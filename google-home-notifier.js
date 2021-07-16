@@ -102,6 +102,5 @@ var onDeviceUp = function(host, url, callback) {
 
 exports.ip = ip;
 exports.device = device;
-exports.accent = accent;
 exports.notify = notify;
 exports.play = play;
